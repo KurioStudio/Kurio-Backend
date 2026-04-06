@@ -15,4 +15,8 @@ public class UserService {
         return repository.register(user, password);
     }
 
+    public User login(String idToken) {
+        return repository.login(idToken);
+    }
+
 }
