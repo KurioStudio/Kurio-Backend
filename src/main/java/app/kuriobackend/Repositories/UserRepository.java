@@ -34,15 +34,16 @@ public class UserRepository {
                     user.username(),
                     user.email(),
                     "",
-                    user.createrAt()
+                    user.createdAt()
             );
 
             //Despues lo registramos en la base de datos
             Firestore db = FirestoreClient.getFirestore();
-            db.collection(COLLECTION).document(user.id()).set(firebaseUser).get();
+            db.collection(COLLECTION).document(firebaseUser.email()).set(firebaseUser).get();
             return res;
         } catch (Exception e) {
             res = 1;
+            e.printStackTrace();
             return res;
         }
     }
@@ -52,16 +53,17 @@ public class UserRepository {
         try {
             //Recogemos el token con el UID del usuario
             FirebaseToken token = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            String uid = token.getUid();
+            String email = token.getEmail();
 
-            if(uid != null && !uid.isEmpty()){
+            if(email != null && !email.isEmpty()){
                 //Buscamos en la base de datos al usuario con el UID.
                 Firestore db = FirestoreClient.getFirestore();
-                user = db.collection(COLLECTION).document(uid).get().get().toObject(User.class);
+                user = db.collection(COLLECTION).document(email).get().get().toObject(User.class);
                 return user;
             }
             return null;
         } catch (FirebaseAuthException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
             return null;
         }
     }
