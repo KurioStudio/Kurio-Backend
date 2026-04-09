@@ -2,10 +2,7 @@ package app.kuriobackend.Repositories;
 
 import app.kuriobackend.Entities.Model.Post;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.Query;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
 
@@ -28,11 +25,14 @@ public class PostRepository {
             //Creamos otro objeto Post para añadirle el id
             Post firebasePost = new Post(
                     id,
+                    post.titulo(),
                     post.descripcion(),
                     post.imagenes(),
                     null,
                     null,
                     post.user(),
+                    post.oid(),
+                    post.licencia(),
                     post.createdAt()
             );
 
@@ -81,6 +81,20 @@ public class PostRepository {
     public List<Post> findAll() throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
         return executeQuery(db.collection(COLLECTION).orderBy("createdAt", Query.Direction.DESCENDING));
+    }
+
+    public int like(Post post, String idUser) {
+        int res = 0;
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            DocumentReference doc = db.collection(COLLECTION).document(post.id());
+            ApiFuture<WriteResult> future = doc.update("likedBy", post.likedBy());
+            future.get();
+            return res;
+        } catch (Exception e) {
+            res = -1;
+            return res;
+        }
     }
 
     private List<Post> executeQuery(Query query) throws ExecutionException, InterruptedException {

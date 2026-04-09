@@ -55,7 +55,17 @@ public class PostController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+    }
 
+    @PutMapping("/like")
+    public ResponseEntity<String> like(@RequestBody PostRequest request, @RequestParam String idUser) {
+        Post post = Post.fromRequest(request);
+        int resultado = service.updateLike(post, idUser);
+        if(resultado == 0){
+            return ResponseEntity.status(HttpStatus.CREATED).body("0");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+        }
     }
 
     //TODO: Descarga del fichero del modelo

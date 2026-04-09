@@ -5,6 +5,7 @@ import app.kuriobackend.Repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,8 +27,12 @@ public class PostService {
             return repository.findAll();
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
+    }
+
+    public int updateLike(Post post, String idUser) {
+        return repository.like(post, idUser);
     }
 
 }
