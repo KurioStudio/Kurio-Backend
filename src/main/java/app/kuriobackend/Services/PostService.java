@@ -35,4 +35,8 @@ public class PostService {
         return repository.like(post, idUser);
     }
 
+    public List<Post> findAllByTitle(String title) {
+        return repository.findAllByTitle(title);
+    }
+
 }

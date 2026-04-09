@@ -97,6 +97,17 @@ public class PostRepository {
         }
     }
 
+    public List<Post> findAllByTitle(String title) {
+        List<Post> posts = new ArrayList<>();
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            Query query = db.collection(COLLECTION).whereEqualTo("titulo", title).orderBy("createdAt", Query.Direction.DESCENDING);
+            return executeQuery(query);
+        } catch (Exception e) {
+            return posts;
+        }
+    }
+
     private List<Post> executeQuery(Query query) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> future = query.get();
         List<QueryDocumentSnapshot> documents = future.get().getDocuments();
