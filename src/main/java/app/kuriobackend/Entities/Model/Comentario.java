@@ -4,11 +4,12 @@ import app.kuriobackend.Entities.DTO.ComentarioRequest;
 import app.kuriobackend.Entities.DTO.ComentarioResponse;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record Comentario(String id, String idPost, String idUser, String contenido, String createdAt) {
     public static Comentario fromRequest(ComentarioRequest cr) {
         return new Comentario(
-                null,
+                UUID.randomUUID().toString(),
                 cr.idPost(),
                 cr.idUser(),
                 cr.contenido(),

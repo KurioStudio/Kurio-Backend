@@ -49,17 +49,7 @@ public class PostController {
         if(posts != null && !posts.isEmpty()){
             List<PostResponse> postResponses = new ArrayList<>();
             posts.forEach(post -> {
-                postResponses.add(new PostResponse(
-                        post.id(),
-                        post.titulo(),
-                        post.descripcion(),
-                        post.imagenes(),
-                        post.likedBy(),
-                        post.cantComentarios(),
-                        post.user(),
-                        post.oid(),
-                        post.licencia()
-                ));
+                postResponses.add(post.toResponse());
             });
             return ResponseEntity.status(HttpStatus.OK).body(postResponses);
         } else {
