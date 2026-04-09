@@ -5,6 +5,8 @@ import app.kuriobackend.Entities.DTO.ComentarioResponse;
 import app.kuriobackend.Entities.Model.Comentario;
 import app.kuriobackend.Services.ComentarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ public class ComentarioController {
     private ComentarioService service;
 
     @GetMapping("/post")
-    public ArrayList<ComentarioResponse> mostrarComentariosPost(@RequestBody String idPost) {
+    public ResponseEntity<ArrayList<ComentarioResponse>> mostrarComentariosPost(@RequestBody String idPost) {
         List<Comentario> comentarios = service.mostrarComentariosPost(idPost);
 
         if(comentarios!=null && !comentarios.isEmpty()){
@@ -26,15 +28,20 @@ public class ComentarioController {
             for (Comentario comentario : comentarios) {
                 comentarioResponse.add(comentario.toResponse());
             }
-            return comentarioResponse;
+            return ResponseEntity.ok(comentarioResponse);
         }
 
-        return new ArrayList<>();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
     }
 
     @PostMapping
-    public int guardar(@RequestBody ComentarioRequest comentarioRequest) {
-        return service.guardar(Comentario.fromRequest(comentarioRequest));
+    public ResponseEntity<String> guardar(@RequestBody ComentarioRequest comentarioRequest) {
+        int res = service.guardar(Comentario.fromRequest(comentarioRequest));
+        if(res == 0) {
+            return ResponseEntity.ok("0");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+        }
     }
 
 }
