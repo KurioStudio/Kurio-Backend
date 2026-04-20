@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 public class PostRepository {
 
     private final String COLLECTION = "posts";
+    private final String FOLLOW_COLLECTION = "follow";
 
     public int guardarPost(Post post) {
         int res = 0;
@@ -102,6 +103,17 @@ public class PostRepository {
         try {
             Firestore db = FirestoreClient.getFirestore();
             Query query = db.collection(COLLECTION).whereEqualTo("titulo", title).orderBy("createdAt", Query.Direction.DESCENDING);
+            return executeQuery(query);
+        } catch (Exception e) {
+            return posts;
+        }
+    }
+
+    public List<Post> findFollowed(String idFollower) {
+        List<Post> posts = new ArrayList<>();
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            Query query = db.collection(FOLLOW_COLLECTION).whereEqualTo("idFollower", idFollower);
             return executeQuery(query);
         } catch (Exception e) {
             return posts;

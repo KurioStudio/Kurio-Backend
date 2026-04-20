@@ -2,7 +2,6 @@ package app.kuriobackend.Entities.Model;
 
 import app.kuriobackend.Entities.DTO.UserRequest;
 import app.kuriobackend.Entities.DTO.UserResponse;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 

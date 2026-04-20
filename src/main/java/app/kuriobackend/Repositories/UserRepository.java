@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 public class UserRepository {
 
     private final String COLLECTION = "users";
+    private final String FOLLOW_COLLECTION = "follow";
 
     public int register(User user, String password){
         int res = 0;
@@ -65,6 +66,30 @@ public class UserRepository {
         } catch (FirebaseAuthException | ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public int findFollowerCount(String idFollowed) {
+        int followerCount = 0;
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            followerCount = db.collection(FOLLOW_COLLECTION).whereEqualTo("idFollowed", idFollowed).get().get().size();
+            return followerCount;
+        } catch (Exception e) {
+            followerCount = -1;
+            return followerCount;
+        }
+    }
+
+    public int findFollowedCount(String idFollower) {
+        int followedCount = 0;
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            followedCount = db.collection(FOLLOW_COLLECTION).whereEqualTo("idFollowed", idFollower).get().get().size();
+            return followedCount;
+        } catch (Exception e) {
+            followedCount = -1;
+            return followedCount;
         }
     }
 

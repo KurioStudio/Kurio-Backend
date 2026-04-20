@@ -1,4 +1,6 @@
 package app.kuriobackend.Entities.DTO;
 
-public record ComentarioRequest(String idPost, String idUser, String contenido) {
+import com.google.firebase.database.annotations.NotNull;
+
+public record ComentarioRequest(@NotNull String idPost, @NotNull String idUser, @NotNull String contenido) {
 }

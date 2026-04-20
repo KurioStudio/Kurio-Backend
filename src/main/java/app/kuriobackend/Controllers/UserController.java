@@ -35,4 +35,16 @@ public class UserController {
         return ResponseEntity.ok(user.toResponse());
     }
 
+    @GetMapping("/followers")
+    public ResponseEntity<String> followers(@RequestBody String idFollowed) {
+        int followers = service.getFollowerCount(idFollowed);
+        return ResponseEntity.ok(followers + "");
+    }
+
+    @GetMapping("/followed")
+    public ResponseEntity<String> followed(@RequestBody String idFollower) {
+        int follower = service.getFollowedCount(idFollower);
+        return ResponseEntity.ok(follower + "");
+    }
+
 }

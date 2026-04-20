@@ -19,4 +19,12 @@ public class UserService {
         return repository.login(idToken);
     }
 
+    public int getFollowerCount(String idFollowed) {
+        return repository.findFollowerCount(idFollowed);
+    }
+
+    public int getFollowedCount(String idFollower) {
+        return repository.findFollowedCount(idFollower);
+    }
+
 }

@@ -39,4 +39,8 @@ public class PostService {
         return repository.findAllByTitle(title);
     }
 
+    public List<Post> findFollowed(String idFollower) {
+        return repository.findFollowed(idFollower);
+    }
+
 }

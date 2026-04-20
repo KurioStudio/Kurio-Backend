@@ -81,5 +81,18 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
     }
 
+    @GetMapping("/follow")
+    public ResponseEntity<List<PostResponse>> findByFollower(@RequestBody String idFollower) {
+        List<Post> posts = service.findFollowed(idFollower);
+        if(posts != null && !posts.isEmpty()){
+            List<PostResponse> postResponses = new ArrayList<>();
+            posts.forEach(post -> {
+                postResponses.add(post.toResponse());
+            });
+            return ResponseEntity.ok(postResponses);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
+    }
+
     //TODO: Descarga del fichero del modelo
 }

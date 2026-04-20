@@ -1,7 +1,7 @@
 package app.kuriobackend.Entities.DTO;
 
-import app.kuriobackend.Entities.Model.User;
+import com.google.firebase.database.annotations.NotNull;
 
-public record UserRequest(String username, String email, String password) {
+public record UserRequest(@NotNull String username, @NotNull String email, @NotNull String password) {
 
 }
