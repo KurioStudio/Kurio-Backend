@@ -3,7 +3,9 @@ package app.kuriobackend.Services;
 import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +16,8 @@ public class PostService {
     @Autowired
     private PostRepository repository;
 
-    public int guardarPost(Post post) {
-        return repository.guardarPost(post);
+    public int guardarPost(Post post, List<MultipartFile> imagenes, MultipartFile file) {
+        return repository.guardarPost(post, imagenes, file);
     }
 
     public int actualizarPost(String id, Post post) {
@@ -43,4 +45,7 @@ public class PostService {
         return repository.findFollowed(idFollower);
     }
 
+    public GridFsResource descargarArchivo(String oid) {
+        return repository.descargarArchivo(oid);
+    }
 }

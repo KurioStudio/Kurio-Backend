@@ -3,12 +3,24 @@ package app.kuriobackend.Repositories;
 import app.kuriobackend.Entities.Model.Post;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import com.google.firebase.cloud.FirestoreClient;
+import com.google.firebase.cloud.StorageClient;
+import com.mongodb.client.gridfs.model.GridFSFile;
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -17,29 +29,42 @@ public class PostRepository {
     private final String COLLECTION = "posts";
     private final String FOLLOW_COLLECTION = "follow";
 
-    public int guardarPost(Post post) {
+    @Autowired
+    private GridFsTemplate gridFsTemplate;
+
+    public int guardarPost(Post post, List<MultipartFile> imagenes, MultipartFile file) {
         int res = 0;
         try {
             //Recogemos el ultimo ID de la base de datos
             String id = String.valueOf(Integer.parseInt(getUltimoId()) + 1);
 
-            //Creamos otro objeto Post para añadirle el id
-            Post firebasePost = new Post(
-                    id,
-                    post.titulo(),
-                    post.descripcion(),
-                    post.imagenes(),
-                    null,
-                    null,
-                    post.user(),
-                    post.oid(),
-                    post.licencia(),
-                    post.createdAt()
-            );
+            //Guardamos el archivo en MongoDB y recuperamos el oid
+            String oid = guardarArchivoMongo(file);
 
-            //Insertamos el nuevo post
-            Firestore db = FirestoreClient.getFirestore();
-            db.collection(COLLECTION).document(id).set(firebasePost).get();
+            //Guardamos las imagenes en Firebase Storage y recuperamos las rutas
+            ArrayList<String> rutasImg = guardarImagenes(imagenes);
+
+            if(!oid.equals("-1")){
+                //Creamos otro objeto Post para añadirle el id
+                Post firebasePost = new Post(
+                        id,
+                        post.titulo(),
+                        post.descripcion(),
+                        rutasImg,
+                        null,
+                        null,
+                        post.user(),
+                        oid,
+                        post.licencia(),
+                        post.createdAt()
+                );
+
+                //Insertamos el nuevo post
+                Firestore db = FirestoreClient.getFirestore();
+                db.collection(COLLECTION).document(id).set(firebasePost).get();
+            } else {
+                res = -1;
+            }
             return res;
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,7 +72,62 @@ public class PostRepository {
             return res;
         }
     }
-    
+
+    private ArrayList<String> guardarImagenes(List<MultipartFile> imagenes) {
+        ArrayList<String> urls = new ArrayList<>();
+        try {
+            Storage storage = StorageClient.getInstance().bucket().getStorage();
+            String bucket = "kurio-6ecc0.firebasestorage.app";
+
+            if(imagenes != null) {
+                for (MultipartFile file : imagenes) {
+                    if(!file.isEmpty()) {
+                        String fileName = "posts/" + UUID.randomUUID() + ".jpg";
+                        String imagenUrl = "https://firebasestorage.googleapis.com/v0/b/"
+                                + bucket + "/o/"
+                                + URLEncoder.encode(fileName, "UTF-8")
+                                .replace("+", "%20").replace("/", "%2F")
+                                + "?alt=media";
+
+                        urls.add(imagenUrl);
+
+                        storage.create(
+                                BlobInfo.newBuilder(bucket, fileName)
+                                    .setContentType(file.getContentType())
+                                    .build(), file.getBytes()
+                        );
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return urls;
+    }
+
+    private String guardarArchivoMongo(MultipartFile file) {
+        try {
+            ObjectId objectId = gridFsTemplate.store(
+                    file.getInputStream(),
+                    file.getOriginalFilename(),
+                    file.getContentType()
+            );
+
+            return objectId.toHexString();
+        } catch (Exception e) {
+            return "-1";
+        }
+    }
+
+    public GridFsResource descargarArchivo(String oid) {
+        GridFSFile file = gridFsTemplate.findOne(
+                new org.springframework.data.mongodb.core.query.Query(Criteria.where("_id").is(oid))
+        );
+
+        return gridFsTemplate.getResource(file);
+    }
+
     public int actualizarPost(String id, Post post) {
         int res = 0;
         try {

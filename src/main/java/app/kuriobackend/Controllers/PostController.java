@@ -5,10 +5,15 @@ import app.kuriobackend.Entities.DTO.PostResponse;
 import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +25,9 @@ public class PostController {
     private PostService service;
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody PostRequest request) {
+    public ResponseEntity<String> create(@RequestPart("request") PostRequest request, @RequestPart("imagenes") List<MultipartFile> imagenes , @RequestPart("file") MultipartFile file) {
         Post post = Post.fromRequest(request);
-        int resultado = service.guardarPost(post);
+        int resultado = service.guardarPost(post, imagenes, file);
 
         if(resultado == 0){
             return ResponseEntity.status(HttpStatus.CREATED).body("0");
@@ -94,5 +99,9 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
     }
 
-    //TODO: Descarga del fichero del modelo
+    @GetMapping("/descargar/{oid}")
+    public ResponseEntity<InputStreamResource> descargarArchivo(@PathVariable String oid) throws IOException {
+        GridFsResource file = service.descargarArchivo(oid);
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(file.getContentType())).body(new InputStreamResource(file.getInputStream()));
+    }
 }
