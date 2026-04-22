@@ -29,6 +29,6 @@ public class UserService {
     }
 
     public boolean updateUser(User user) {
-        repository.updateUser(user);
+        return repository.updateUser(user);
     }
 }
