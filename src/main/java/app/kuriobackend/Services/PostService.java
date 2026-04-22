@@ -48,4 +48,12 @@ public class PostService {
     public GridFsResource descargarArchivo(String oid) {
         return repository.descargarArchivo(oid);
     }
+
+    public List<Post> findTopPosts() {
+        return repository.findTopPosts();
+    }
+
+    public List<Post> findRecentPosts() {
+        return repository.findRecentPosts();
+    }
 }

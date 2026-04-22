@@ -212,6 +212,28 @@ public class PostRepository {
         }
     }
 
+    public List<Post> findTopPosts() {
+        List<Post> posts = new ArrayList<>();
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            Query query = db.collection(COLLECTION).orderBy("likedBy", Query.Direction.ASCENDING);
+            return executeQuery(query);
+        } catch (Exception e) {
+            return posts;
+        }
+    }
+
+    public List<Post> findRecentPosts() {
+        List<Post> posts = new ArrayList<>();
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            Query query = db.collection(COLLECTION).orderBy("createdAt", Query.Direction.DESCENDING);
+            return executeQuery(query);
+        } catch (Exception e) {
+            return posts;
+        }
+    }
+
     private List<Post> executeQuery(Query query) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> future = query.get();
         List<QueryDocumentSnapshot> documents = future.get().getDocuments();

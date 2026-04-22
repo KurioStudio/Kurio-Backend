@@ -93,4 +93,13 @@ public class UserRepository {
         }
     }
 
+    public boolean updateUser(User user) {
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            db.collection(COLLECTION).document(user.email()).set(user).get();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

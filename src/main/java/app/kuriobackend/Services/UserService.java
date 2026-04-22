@@ -27,4 +27,8 @@ public class UserService {
     public int getFollowedCount(String idFollower) {
         return repository.findFollowedCount(idFollower);
     }
+
+    public boolean updateUser(User user) {
+        repository.updateUser(user);
+    }
 }

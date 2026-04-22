@@ -11,9 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -105,6 +103,32 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> findByFollower(@RequestBody String idFollower) {
         List<Post> posts = service.findFollowed(idFollower);
         if(posts != null && !posts.isEmpty()){
+            List<PostResponse> postResponses = new ArrayList<>();
+            posts.forEach(post -> {
+                postResponses.add(post.toResponse());
+            });
+            return ResponseEntity.ok(postResponses);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<List<PostResponse>> findTopPosts() {
+        List<Post> posts = service.findTopPosts();
+        if(posts != null && !posts.isEmpty()) {
+            List<PostResponse> postResponses = new ArrayList<>();
+            posts.forEach(post -> {
+                postResponses.add(post.toResponse());
+            });
+            return ResponseEntity.ok(postResponses);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<PostResponse>> findRecentPosts() {
+        List<Post> posts = service.findRecentPosts();
+        if(posts != null && !posts.isEmpty()) {
             List<PostResponse> postResponses = new ArrayList<>();
             posts.forEach(post -> {
                 postResponses.add(post.toResponse());

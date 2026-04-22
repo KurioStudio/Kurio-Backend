@@ -46,4 +46,15 @@ public class UserController {
         return ResponseEntity.ok(follower + "");
     }
 
+    @PutMapping
+    public ResponseEntity<String> updateUser(@RequestBody UserRequest request){
+        User user = User.fromRequest(request);
+
+        if(service.updateUser(user)){
+            return ResponseEntity.ok("0");
+        } else {
+            return ResponseEntity.badRequest().body("-1");
+        }
+    }
+
 }
