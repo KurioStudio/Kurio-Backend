@@ -6,6 +6,8 @@ import app.kuriobackend.Entities.Model.User;
 import app.kuriobackend.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,13 +28,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody String idToken) {
-        User user = service.login(idToken);
-        if(user == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        return ResponseEntity.ok(user.toResponse());
+    @GetMapping
+    public ResponseEntity<String> login(@AuthenticationPrincipal Jwt jwt) {
+        String uid = jwt.getSubject();
+        return ResponseEntity.ok(uid);
     }
 
     @GetMapping("/followers")

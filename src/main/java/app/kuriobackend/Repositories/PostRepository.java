@@ -169,8 +169,20 @@ public class PostRepository {
         try {
             Firestore db = FirestoreClient.getFirestore();
             DocumentReference doc = db.collection(COLLECTION).document(post.id());
-            ApiFuture<WriteResult> future = doc.update("likedBy", post.likedBy());
-            future.get();
+            DocumentSnapshot snapshot = doc.get().get();
+
+            //Recogemos la lista de likes de una publicacion
+            List<String> likedBy = (List<String>) snapshot.get("likedBy");
+
+            //Si la lista no es nula y contiene el id del usuario, se quita de la lista. Si no, se añade
+            if(likedBy != null && likedBy.contains(idUser)) {
+                ApiFuture<WriteResult> future = doc.update("likedBy", FieldValue.arrayRemove(idUser));
+                future.get();
+            } else {
+                ApiFuture<WriteResult> future = doc.update("likedBy", FieldValue.arrayUnion(idUser));
+                future.get();
+            }
+
             return res;
         } catch (Exception e) {
             res = -1;
