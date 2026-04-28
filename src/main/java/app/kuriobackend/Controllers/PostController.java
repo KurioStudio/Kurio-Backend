@@ -56,6 +56,16 @@ public class PostController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<PostResponse> findById(@PathVariable String id) {
+        PostResponse response = service.findById(id);
+        if(response != null){
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
     @GetMapping
     public ResponseEntity<List<PostResponse>> findAll() {
         List<Post> posts = service.findAll();

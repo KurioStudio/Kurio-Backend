@@ -1,5 +1,6 @@
 package app.kuriobackend.Services;
 
+import app.kuriobackend.Entities.DTO.PostResponse;
 import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +56,10 @@ public class PostService {
 
     public List<Post> findRecentPosts() {
         return repository.findRecentPosts();
+    }
+
+    public PostResponse findById(String id) {
+        Post post = repository.findById(id);
+        return post != null ? post.toResponse() : null;
     }
 }

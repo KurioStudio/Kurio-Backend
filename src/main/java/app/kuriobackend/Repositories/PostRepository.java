@@ -245,4 +245,14 @@ public class PostRepository {
         }
         return posts;
     }
+
+    public Post findById(String id) {
+        ApiFuture<DocumentSnapshot> future = FirestoreClient.getFirestore().collection(COLLECTION).document(id).get();
+        try {
+            DocumentSnapshot snapshot = future.get();
+            return snapshot.toObject(Post.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
