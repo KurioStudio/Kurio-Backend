@@ -33,8 +33,8 @@ public class PostService {
         }
     }
 
-    public int updateLike(Post post, String idUser) {
-        return repository.like(post, idUser);
+    public int updateLike(String idPost, String idUser) {
+        return repository.like(idPost, idUser);
     }
 
     public List<Post> findAllByTitle(String title) {

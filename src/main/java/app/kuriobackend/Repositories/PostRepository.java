@@ -164,11 +164,11 @@ public class PostRepository {
         return executeQuery(db.collection(COLLECTION).orderBy("createdAt", Query.Direction.DESCENDING));
     }
 
-    public int like(Post post, String idUser) {
+    public int like(String idPost, String idUser) {
         int res = 0;
         try {
             Firestore db = FirestoreClient.getFirestore();
-            DocumentReference doc = db.collection(COLLECTION).document(post.id());
+            DocumentReference doc = db.collection(COLLECTION).document(idPost);
             DocumentSnapshot snapshot = doc.get().get();
 
             //Recogemos la lista de likes de una publicacion

@@ -7,6 +7,7 @@ import app.kuriobackend.Services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -70,16 +71,15 @@ public class PostController {
         }
     }
 
-    @PutMapping("/like")
-    public ResponseEntity<String> like(@RequestBody PostRequest request) {
+    @PutMapping("/{idPost}/like")
+    public ResponseEntity<String> like(@PathVariable String idPost) {
         String idUser = null;
         Authentication  authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
             idUser = jwt.getSubject();
         }
 
-        Post post = Post.fromRequest(request);
-        int resultado = service.updateLike(post, idUser);
+        int resultado = service.updateLike(idPost, idUser);
         if(resultado == 0){
             return ResponseEntity.status(HttpStatus.CREATED).body("0");
         } else {
@@ -139,9 +139,11 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
     }
 
-    @GetMapping("/descargar/{oid}")
+    @GetMapping("/{oid}/descargar")
     public ResponseEntity<InputStreamResource> descargarArchivo(@PathVariable String oid) throws IOException {
         GridFsResource file = service.descargarArchivo(oid);
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(file.getContentType())).body(new InputStreamResource(file.getInputStream()));
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(file.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                .body(new InputStreamResource(file.getInputStream()));
     }
 }
