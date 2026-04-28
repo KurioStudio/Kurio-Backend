@@ -110,7 +110,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
     }
 
-    @GetMapping("/follow")
+    @PostMapping("/follow")
     public ResponseEntity<List<PostResponse>> findByFollower(@RequestBody String idFollower) {
         List<Post> posts = service.findFollowed(idFollower);
         if(posts != null && !posts.isEmpty()){
