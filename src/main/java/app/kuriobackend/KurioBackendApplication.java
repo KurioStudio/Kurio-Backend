@@ -24,6 +24,7 @@ public class KurioBackendApplication {
             if(serviceAccount != null) {
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                        .setStorageBucket("kurio-6ecc0.firebasestorage.app")
                         .build();
 
                 if(FirebaseApp.getApps().isEmpty()) {
