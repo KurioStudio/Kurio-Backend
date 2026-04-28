@@ -165,7 +165,7 @@ public class PostRepository {
 
     public List<Post> findAll() throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
-        executeQuery(db.collection(COLLECTION).orderBy("createdAt", Query.Direction.DESCENDING));
+        return executeQuery(db.collection(COLLECTION).orderBy("createdAt", Query.Direction.DESCENDING));
     }
 
     public int like(String idPost, String idUser) {
