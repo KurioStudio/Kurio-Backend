@@ -18,10 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -221,7 +218,8 @@ public class PostRepository {
         try {
             Firestore db = FirestoreClient.getFirestore();
             Query query = db.collection(COLLECTION).orderBy("likedBy", Query.Direction.ASCENDING);
-            return executeQuery(query);
+            return executeQuery(query).stream()
+                    .sorted(Comparator.comparingInt(p -> p.likedBy() != null ? p.likedBy().size() : 0)).toList().reversed();
         } catch (Exception e) {
             return posts;
         }
