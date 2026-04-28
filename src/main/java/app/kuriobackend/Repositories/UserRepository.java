@@ -1,9 +1,9 @@
 package app.kuriobackend.Repositories;
 
+import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Entities.Model.User;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -11,6 +11,8 @@ import com.google.firebase.auth.UserRecord;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -101,5 +103,28 @@ public class UserRepository {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public User findById(String id) {
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            Query query = db.collection(COLLECTION).whereEqualTo("id", id);
+            List<User> users = executeQuery(query);
+            return !users.isEmpty() ? users.getFirst() : null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<User> executeQuery(Query query) throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> future = query.get();
+        List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+        List<User> users = new ArrayList<>();
+
+        for (QueryDocumentSnapshot doc : documents) {
+            User user = doc.toObject(User.class);
+            users.add(user);
+        }
+        return users;
     }
 }

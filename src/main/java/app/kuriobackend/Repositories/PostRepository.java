@@ -1,6 +1,7 @@
 package app.kuriobackend.Repositories;
 
 import app.kuriobackend.Entities.Model.Post;
+import app.kuriobackend.Entities.Model.User;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.cloud.storage.BlobInfo;
@@ -31,6 +32,9 @@ public class PostRepository {
 
     @Autowired
     private GridFsTemplate gridFsTemplate;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public int guardarPost(Post post, List<MultipartFile> imagenes, MultipartFile file) {
         int res = 0;
@@ -161,7 +165,7 @@ public class PostRepository {
 
     public List<Post> findAll() throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
-        return executeQuery(db.collection(COLLECTION).orderBy("createdAt", Query.Direction.DESCENDING));
+        executeQuery(db.collection(COLLECTION).orderBy("createdAt", Query.Direction.DESCENDING));
     }
 
     public int like(String idPost, String idUser) {
@@ -240,7 +244,22 @@ public class PostRepository {
         List<Post> posts = new ArrayList<>();
 
         for (QueryDocumentSnapshot doc : documents) {
-            Post post = doc.toObject(Post.class);
+            User user = userRepository.findById(doc.get("user", User.class).id());
+            Post firebasePost = doc.toObject(Post.class);
+
+            Post post = new Post(
+                    firebasePost.id(),
+                    firebasePost.titulo(),
+                    firebasePost.descripcion(),
+                    firebasePost.imagenes(),
+                    firebasePost.likedBy(),
+                    firebasePost.cantComentarios(),
+                    user,
+                    firebasePost.oid(),
+                    firebasePost.licencia(),
+                    firebasePost.createdAt()
+            );
+
             posts.add(post);
         }
         return posts;
