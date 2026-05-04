@@ -97,8 +97,8 @@ public class PostController {
         }
     }
 
-    @PostMapping("/title")
-    public ResponseEntity<List<PostResponse>> findByTitle(@RequestBody String title) {
+    @GetMapping("/title")
+    public ResponseEntity<List<PostResponse>> findByTitle(@RequestParam String title) {
         List<Post> posts = service.findAllByTitle(title);
         if(posts != null && !posts.isEmpty()) {
             List<PostResponse> postResponses = new ArrayList<>();

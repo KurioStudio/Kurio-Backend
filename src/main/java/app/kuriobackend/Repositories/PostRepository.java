@@ -198,6 +198,7 @@ public class PostRepository {
             Query query = db.collection(COLLECTION).whereEqualTo("titulo", title).orderBy("createdAt", Query.Direction.DESCENDING);
             return executeQuery(query);
         } catch (Exception e) {
+            System.out.println("Error al buscar por título: " + e);
             return posts;
         }
     }
