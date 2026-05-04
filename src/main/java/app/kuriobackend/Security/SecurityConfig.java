@@ -38,11 +38,10 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/**").permitAll()
-                        .requestMatchers("/api/posts","/api/posts/**").permitAll()
-                        .requestMatchers("/api/posts/**/descargar").permitAll()
-                        .requestMatchers("/api/comentario","/api/comentario/**").permitAll()
+                        .requestMatchers("/api/posts/**").permitAll()
+                        .requestMatchers("/api/comentario/**").permitAll()
                         .requestMatchers("/api/follow").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.decoder(jwtDecoder())))
