@@ -39,6 +39,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/register").permitAll()
                         .requestMatchers("/api/posts","/api/posts/**").permitAll()
+                        .requestMatchers("/api/comentario","/api/comentario/**").permitAll()
+                        .requestMatchers("/api/follow").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

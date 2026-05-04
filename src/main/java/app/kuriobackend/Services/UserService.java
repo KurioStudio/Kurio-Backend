@@ -1,6 +1,8 @@
 package app.kuriobackend.Services;
 
+import app.kuriobackend.Entities.DTO.PostResponse;
 import app.kuriobackend.Entities.DTO.UserResponse;
+import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Entities.Model.User;
 import app.kuriobackend.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,4 +33,10 @@ public class UserService {
     public boolean updateUser(User user) {
         return repository.updateUser(user);
     }
+
+    public UserResponse findById(String id) {
+        User user = repository.findById(id);
+        return user != null ? user.toResponse() : null;
+    }
 }
+

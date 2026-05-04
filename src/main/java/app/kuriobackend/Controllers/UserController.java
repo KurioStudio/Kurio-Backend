@@ -1,10 +1,12 @@
 package app.kuriobackend.Controllers;
 
+import app.kuriobackend.Entities.DTO.PostResponse;
 import app.kuriobackend.Entities.DTO.UserRequest;
 import app.kuriobackend.Entities.DTO.UserResponse;
 import app.kuriobackend.Entities.Model.User;
 import app.kuriobackend.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -58,4 +60,13 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> findById(@PathVariable String id) {
+        UserResponse response = service.findById(id);
+        if(response != null){
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }

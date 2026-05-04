@@ -32,10 +32,11 @@ public class ComentarioRepository {
         try{
             Firestore db = FirestoreClient.getFirestore();
             Query query = db.collection(COLLECTION)
-                    .orderBy("createdAt", Query.Direction.DESCENDING)
-                    .whereEqualTo("idPost", idPost);
+                    .whereEqualTo("idPost", idPost)
+                    .orderBy("createdAt", Query.Direction.DESCENDING);
             return executeQuery(query);
         } catch (Exception e) {
+            System.out.println("Error al mostrar comentarios post: "  + e);
             return new ArrayList<>();
         }
     }

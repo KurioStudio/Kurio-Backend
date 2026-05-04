@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -20,9 +21,11 @@ public class ComentarioController {
     @Autowired
     private ComentarioService service;
 
-    @GetMapping("/post")
-    public ResponseEntity<ArrayList<ComentarioResponse>> mostrarComentariosPost(@RequestBody String idPost) {
+    @PostMapping("/post")
+    public ResponseEntity<ArrayList<ComentarioResponse>> mostrarComentariosPost(@RequestBody Map<String, String> payload) {
+        String idPost = payload.get("idPost");
         List<Comentario> comentarios = service.mostrarComentariosPost(idPost);
+        System.out.println("Comentarios: " + comentarios);
 
         if(comentarios!=null && !comentarios.isEmpty()){
             ArrayList<ComentarioResponse> comentarioResponse = new ArrayList<>();
