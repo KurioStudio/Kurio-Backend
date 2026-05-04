@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/posts","/api/posts/**").permitAll()
                         .requestMatchers("/api/comentario","/api/comentario/**").permitAll()
                         .requestMatchers("/api/follow").permitAll()
