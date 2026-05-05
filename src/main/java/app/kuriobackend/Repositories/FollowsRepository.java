@@ -1,12 +1,10 @@
 package app.kuriobackend.Repositories;
 
-import app.kuriobackend.Entities.DTO.FollowResponse;
 import app.kuriobackend.Entities.Model.Follow;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 
 @Repository
 public class FollowsRepository {
@@ -29,9 +27,11 @@ public class FollowsRepository {
         int res = 0;
         try {
             Firestore db = FirestoreClient.getFirestore();
-            db.collection(COLLECTION).document(follow.idFollower() + "_" + follow.idFollowed()).delete();
+            System.out.println("Eliminando follow: " + follow.idFollower() + " sigue a " + follow.idFollowed());
+            db.collection(COLLECTION).document(follow.idFollower() + "_" + follow.idFollowed()).delete().get();
             return res;
         } catch (Exception e) {
+            System.out.println("Error al eliminar el follow: " + e.getMessage());
             res = -1;
             return res;
         }

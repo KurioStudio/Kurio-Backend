@@ -7,6 +7,7 @@ import app.kuriobackend.Services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -151,9 +152,37 @@ public class PostController {
 
     @GetMapping("/{oid}/descargar")
     public ResponseEntity<InputStreamResource> descargarArchivo(@PathVariable String oid) throws IOException {
-        GridFsResource file = service.descargarArchivo(oid);
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(file.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
-                .body(new InputStreamResource(file.getInputStream()));
+    GridFsResource file = service.descargarArchivo(oid);
+
+    String filename = file.getFilename();
+    String contentType = file.getContentType();
+
+    if (filename == null || !filename.contains(".")) {
+        String extension = "stl";
+
+        if (contentType != null) {
+            if (contentType.toLowerCase().contains("3mf")) {
+                extension = "3mf";
+            } else if (contentType.toLowerCase().contains("stl")) {
+                extension = "stl";
+            }
+        }
+
+        filename = (filename != null ? filename : "modelo") + "." + extension;
+    }
+
+    MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+
+    if (filename.toLowerCase().endsWith(".3mf")) {
+        mediaType = MediaType.parseMediaType("application/vnd.ms-package.3dmanufacturing-3dmodel+xml");
+    } else if (filename.toLowerCase().endsWith(".stl")) {
+        mediaType = MediaType.parseMediaType("model/stl");
+    }
+
+    return ResponseEntity.ok()
+            .contentType(mediaType)
+            .header(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + filename + "\"")
+            .body(new InputStreamResource(file.getInputStream()));
     }
 }
