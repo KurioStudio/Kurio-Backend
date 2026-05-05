@@ -37,15 +37,15 @@ public class UserController {
         return ResponseEntity.ok(uid);
     }
 
-    @GetMapping("/followers")
-    public ResponseEntity<String> followers(@RequestBody String idFollowed) {
-        int followers = service.getFollowerCount(idFollowed);
+    @GetMapping("{id}/followers")
+    public ResponseEntity<String> followers(@PathVariable String id) {
+        int followers = service.getFollowerCount(id);
         return ResponseEntity.ok(followers + "");
     }
 
-    @GetMapping("/followed")
-    public ResponseEntity<String> followed(@RequestBody String idFollower) {
-        int follower = service.getFollowedCount(idFollower);
+    @GetMapping("{id}/followed")
+    public ResponseEntity<String> followed(@PathVariable String id) {
+        int follower = service.getFollowedCount(id);
         return ResponseEntity.ok(follower + "");
     }
 

@@ -32,7 +32,8 @@ public record Post(String id, String titulo, String descripcion, ArrayList<Strin
                 this.cantComentarios,
                 this.user,
                 this.oid,
-                this.licencia
+                this.licencia,
+                this.createdAt
         );
     }
 }

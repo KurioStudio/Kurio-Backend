@@ -1,6 +1,5 @@
 package app.kuriobackend.Repositories;
 
-import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Entities.Model.User;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
@@ -19,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 public class UserRepository {
 
     private final String COLLECTION = "users";
-    private final String FOLLOW_COLLECTION = "follow";
+    private final String FOLLOW_COLLECTION = "follows";
 
     public int register(User user, String password){
         int res = 0;
@@ -87,7 +86,7 @@ public class UserRepository {
         int followedCount = 0;
         try {
             Firestore db = FirestoreClient.getFirestore();
-            followedCount = db.collection(FOLLOW_COLLECTION).whereEqualTo("idFollowed", idFollower).get().get().size();
+            followedCount = db.collection(FOLLOW_COLLECTION).whereEqualTo("idFollower", idFollower).get().get().size();
             return followedCount;
         } catch (Exception e) {
             followedCount = -1;

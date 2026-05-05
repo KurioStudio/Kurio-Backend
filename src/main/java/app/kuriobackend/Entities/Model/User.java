@@ -21,7 +21,8 @@ public record User(String id, String username, String email, String avatarImg, S
                 this.id,
                 this.username,
                 this.email,
-                this.avatarImg()
+                this.avatarImg,
+                this.createdAt
         );
     }
 }
