@@ -115,6 +115,7 @@ public class PostController {
     @PostMapping("/follow")
     public ResponseEntity<List<PostResponse>> findByFollower(@RequestBody FollowRequest idFollower) {
         List<Post> posts = service.findFollowed(idFollower.idFollower());
+        System.out.println("Posts encontrados para el seguidor " + idFollower.idFollower() + ": " + posts.size());
         if(posts != null && !posts.isEmpty()){
             List<PostResponse> postResponses = new ArrayList<>();
             posts.forEach(post -> {
@@ -122,7 +123,7 @@ public class PostController {
             });
             return ResponseEntity.ok(postResponses);
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ArrayList<>());
+        return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
     }
 
     @GetMapping("/top")

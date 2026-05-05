@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 public class PostRepository {
 
     private final String COLLECTION = "posts";
-    private final String FOLLOW_COLLECTION = "follow";
+    private final String FOLLOW_COLLECTION = "follows";
 
     @Autowired
     private GridFsTemplate gridFsTemplate;
@@ -210,12 +210,11 @@ public class PostRepository {
         Set<Post> posts = new HashSet<>();
 
         try {
-            System.out.println("ID del seguidor: " + idFollower);
-
-            Firestore db = FirestoreClient.getFirestore();
-
             List<Post> allPosts = new ArrayList<>(findAll());
-
+            
+            Firestore db = FirestoreClient.getFirestore();
+            
+            System.out.println("ID del seguidor: " + idFollower);
             db.collection(FOLLOW_COLLECTION)
                 .whereEqualTo("idFollower", idFollower)
                 .get().get()
@@ -234,7 +233,8 @@ public class PostRepository {
                 });
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error al buscar posts de seguidos: " + e);
+            return new ArrayList<>();
         }
 
         return new ArrayList<>(posts);
