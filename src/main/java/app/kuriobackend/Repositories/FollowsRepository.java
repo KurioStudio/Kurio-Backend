@@ -14,12 +14,17 @@ public class FollowsRepository {
     public int follow(Follow follow) {
         int res = 0;
         try {
+            System.out.println("Guardando follow: " + follow.idFollower() + " -> " + follow.idFollowed());
             Firestore db = FirestoreClient.getFirestore();
-            db.collection(COLLECTION).document(follow.idFollower() + "_" + follow.idFollowed()).set(follow);
+            db.collection(COLLECTION)
+            .document(follow.idFollower() + "_" + follow.idFollowed())
+            .set(follow)
+            .get();
+
             return res;
         } catch (Exception e) {
-            res = -1;
-            return res;
+            e.printStackTrace(); 
+            return -1;
         }
     }
 
