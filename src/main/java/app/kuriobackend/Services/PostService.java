@@ -1,5 +1,6 @@
 package app.kuriobackend.Services;
 
+import app.kuriobackend.Entities.DTO.GuardadoRequest;
 import app.kuriobackend.Entities.DTO.PostResponse;
 import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Repositories.PostRepository;
@@ -61,5 +62,17 @@ public class PostService {
     public PostResponse findById(String id) {
         Post post = repository.findById(id);
         return post != null ? post.toResponse() : null;
+    }
+
+    public int guardarPostLista(GuardadoRequest request) {
+        return repository.guardarPostLista(request);
+    }
+
+    public int eliminarPostLista(GuardadoRequest request) {
+        return repository.eliminarPostLista(request);
+    }
+
+    public List<Post> findGuardadosByUser(String idUser) {
+        return repository.findGuardadosByUser(idUser);
     }
 }

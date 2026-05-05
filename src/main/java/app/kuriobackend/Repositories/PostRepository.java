@@ -1,5 +1,6 @@
 package app.kuriobackend.Repositories;
 
+import app.kuriobackend.Entities.DTO.GuardadoRequest;
 import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Entities.Model.User;
 import com.google.api.core.ApiFuture;
@@ -26,6 +27,7 @@ public class PostRepository {
 
     private final String COLLECTION = "posts";
     private final String FOLLOW_COLLECTION = "follows";
+    private final String GUARDADO_COLLECTION = "guardados";
 
     @Autowired
     private GridFsTemplate gridFsTemplate;
@@ -263,6 +265,51 @@ public class PostRepository {
         }
     }
 
+    public Post findById(String id) {
+        ApiFuture<DocumentSnapshot> future = FirestoreClient.getFirestore().collection(COLLECTION).document(id).get();
+        try {
+            DocumentSnapshot snapshot = future.get();
+            return snapshot.toObject(Post.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public int guardarPostLista(GuardadoRequest request) {
+        int res = 0;
+        try {
+           Firestore db = FirestoreClient.getFirestore();
+           db.collection(GUARDADO_COLLECTION).document(request.idPost() + request.idUser()).set(request).get();
+           return res;
+        } catch (Exception e) {
+            res = -1;
+            return res;
+        }
+    } 
+
+    public int eliminarPostLista(GuardadoRequest request) {
+        int res = 0;
+        try {
+           Firestore db = FirestoreClient.getFirestore();
+           db.collection(GUARDADO_COLLECTION).document(request.idPost() + request.idUser()).delete().get();
+           return res;
+        } catch (Exception e) {
+            res = -1;
+            return res;
+        }
+    }
+
+    public List<Post> findGuardadosByUser(String idUser) {
+        List<Post> posts = new ArrayList<>();
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            Query query = db.collection(GUARDADO_COLLECTION).whereEqualTo("idUser", idUser);
+            return executeQuery(query);
+        } catch (Exception e) {
+            return posts;
+        }
+    }
+
     private List<Post> executeQuery(Query query) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> future = query.get();
         List<QueryDocumentSnapshot> documents = future.get().getDocuments();
@@ -288,15 +335,5 @@ public class PostRepository {
             posts.add(post);
         }
         return posts;
-    }
-
-    public Post findById(String id) {
-        ApiFuture<DocumentSnapshot> future = FirestoreClient.getFirestore().collection(COLLECTION).document(id).get();
-        try {
-            DocumentSnapshot snapshot = future.get();
-            return snapshot.toObject(Post.class);
-        } catch (Exception e) {
-            return null;
-        }
     }
 }

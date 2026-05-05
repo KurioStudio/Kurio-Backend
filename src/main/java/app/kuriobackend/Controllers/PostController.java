@@ -1,6 +1,7 @@
 package app.kuriobackend.Controllers;
 
 import app.kuriobackend.Entities.DTO.FollowRequest;
+import app.kuriobackend.Entities.DTO.GuardadoRequest;
 import app.kuriobackend.Entities.DTO.PostRequest;
 import app.kuriobackend.Entities.DTO.PostResponse;
 import app.kuriobackend.Entities.Model.Post;
@@ -8,7 +9,6 @@ import app.kuriobackend.Services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
-import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -186,5 +186,40 @@ public class PostController {
             .header(HttpHeaders.CONTENT_DISPOSITION,
                     "attachment; filename=\"" + filename + "\"")
             .body(new InputStreamResource(file.getInputStream()));
+    }
+
+    @PostMapping("/guardar")
+    public ResponseEntity<String> guardarPostLista(@RequestBody GuardadoRequest request) {
+        int resultado = service.guardarPostLista(request);
+
+        if(resultado == 0){
+            return ResponseEntity.status(HttpStatus.CREATED).body("0");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+        }
+    }
+
+    @DeleteMapping("/guardar")
+    public ResponseEntity<String> eliminarPostLista(@RequestBody GuardadoRequest request) {
+        int resultado = service.eliminarPostLista(request);
+
+        if(resultado == 0){
+            return ResponseEntity.status(HttpStatus.OK).body("0");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+        }
+    }
+
+    @GetMapping("/{idUser}/guardados")
+    public ResponseEntity<List<PostResponse>> findGuardadosByUser(@PathVariable String idUser) {
+        List<Post> posts = service.findGuardadosByUser(idUser);
+        if(posts != null && !posts.isEmpty()) {
+            List<PostResponse> postResponses = new ArrayList<>();
+            posts.forEach(post -> {
+                postResponses.add(post.toResponse());
+            });
+            return ResponseEntity.ok(postResponses);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
     }
 }

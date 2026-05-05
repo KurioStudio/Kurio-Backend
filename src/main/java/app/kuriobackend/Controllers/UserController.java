@@ -1,6 +1,5 @@
 package app.kuriobackend.Controllers;
 
-import app.kuriobackend.Entities.DTO.PostResponse;
 import app.kuriobackend.Entities.DTO.UserRequest;
 import app.kuriobackend.Entities.DTO.UserResponse;
 import app.kuriobackend.Entities.Model.User;
