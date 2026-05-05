@@ -194,9 +194,12 @@ public class PostRepository {
     public List<Post> findAllByTitle(String title) {
         List<Post> posts = new ArrayList<>();
         try {
-            Firestore db = FirestoreClient.getFirestore();
-            Query query = db.collection(COLLECTION).whereEqualTo("titulo", title).orderBy("createdAt", Query.Direction.DESCENDING);
-            return executeQuery(query);
+            findAll().forEach(post -> {
+                if(post.titulo().toLowerCase().contains(title.toLowerCase())) {
+                    posts.add(post);
+                }
+            });
+            return posts;
         } catch (Exception e) {
             System.out.println("Error al buscar por título: " + e);
             return posts;

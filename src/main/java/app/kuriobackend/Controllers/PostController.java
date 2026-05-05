@@ -107,7 +107,7 @@ public class PostController {
             });
             return ResponseEntity.ok(postResponses);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
     }
 
     @PostMapping("/follow")
@@ -120,7 +120,7 @@ public class PostController {
             });
             return ResponseEntity.ok(postResponses);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
     }
 
     @GetMapping("/top")
