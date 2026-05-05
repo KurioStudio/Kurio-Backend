@@ -35,7 +35,7 @@ public class ComentarioController {
             return ResponseEntity.ok(comentarioResponse);
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
+        return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
     }
 
     @PostMapping

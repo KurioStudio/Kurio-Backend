@@ -1,6 +1,8 @@
 package app.kuriobackend.Repositories;
 
 import app.kuriobackend.Entities.Model.Follow;
+
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
@@ -39,6 +41,17 @@ public class FollowsRepository {
             System.out.println("Error al eliminar el follow: " + e.getMessage());
             res = -1;
             return res;
+        }
+    }
+
+    public boolean isFollowing(Follow follow) {
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            DocumentSnapshot document = db.collection(COLLECTION).document(follow.idFollower() + "_" + follow.idFollowed()).get().get();
+            return document.exists();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

@@ -207,14 +207,37 @@ public class PostRepository {
     }
 
     public List<Post> findFollowed(String idFollower) {
-        List<Post> posts = new ArrayList<>();
+        Set<Post> posts = new HashSet<>();
+
         try {
+            System.out.println("ID del seguidor: " + idFollower);
+
             Firestore db = FirestoreClient.getFirestore();
-            Query query = db.collection(FOLLOW_COLLECTION).whereEqualTo("idFollower", idFollower);
-            return executeQuery(query);
+
+            List<Post> allPosts = new ArrayList<>(findAll());
+
+            db.collection(FOLLOW_COLLECTION)
+                .whereEqualTo("idFollower", idFollower)
+                .get().get()
+                .getDocuments()
+                .forEach(document -> {
+
+                    String idFollowed = document.getString("idFollowed");
+                    System.out.println("ID del seguido: " + idFollowed);
+
+                    allPosts.stream()
+                        .filter(p -> p.user() != null
+                            && p.user().id() != null
+                            && p.user().id().equals(idFollowed))
+                        .forEach(posts::add);
+                    System.out.println("Posts encontrados para el seguido " + idFollowed + ": " + posts.size());
+                });
+
         } catch (Exception e) {
-            return posts;
+            e.printStackTrace();
         }
+
+        return new ArrayList<>(posts);
     }
 
     public List<Post> findTopPosts() {

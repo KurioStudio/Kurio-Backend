@@ -1,6 +1,5 @@
 package app.kuriobackend.Services;
 
-import app.kuriobackend.Entities.DTO.FollowResponse;
 import app.kuriobackend.Entities.Model.Follow;
 import app.kuriobackend.Repositories.FollowsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,10 @@ public class FollowService {
 
     public int unfollow(Follow follow) {
         return repository.unfollow(follow);
+    }
+
+    public boolean isFollowing(Follow follow) {
+        return repository.isFollowing(follow);
     }
 
 }

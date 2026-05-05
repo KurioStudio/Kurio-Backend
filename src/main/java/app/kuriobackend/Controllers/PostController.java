@@ -1,5 +1,6 @@
 package app.kuriobackend.Controllers;
 
+import app.kuriobackend.Entities.DTO.FollowRequest;
 import app.kuriobackend.Entities.DTO.PostRequest;
 import app.kuriobackend.Entities.DTO.PostResponse;
 import app.kuriobackend.Entities.Model.Post;
@@ -112,8 +113,8 @@ public class PostController {
     }
 
     @PostMapping("/follow")
-    public ResponseEntity<List<PostResponse>> findByFollower(@RequestBody String idFollower) {
-        List<Post> posts = service.findFollowed(idFollower);
+    public ResponseEntity<List<PostResponse>> findByFollower(@RequestBody FollowRequest idFollower) {
+        List<Post> posts = service.findFollowed(idFollower.idFollower());
         if(posts != null && !posts.isEmpty()){
             List<PostResponse> postResponses = new ArrayList<>();
             posts.forEach(post -> {
@@ -121,7 +122,7 @@ public class PostController {
             });
             return ResponseEntity.ok(postResponses);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ArrayList<>());
     }
 
     @GetMapping("/top")
