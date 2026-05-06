@@ -37,7 +37,7 @@ public class FollowController {
     }
 
     @PostMapping("/isFollowing")
-    public ResponseEntity<String> isFollowing(@Validated FollowRequest followRequest) {
+    public ResponseEntity<String> isFollowing(@RequestBody @Validated FollowRequest followRequest) {
         Follow follow = Follow.fromRequest(followRequest);
         if(service.isFollowing(follow)) {
             return ResponseEntity.ok("0");
