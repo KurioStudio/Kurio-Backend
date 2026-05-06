@@ -302,11 +302,29 @@ public class PostRepository {
     public List<Post> findGuardadosByUser(String idUser) {
         List<Post> posts = new ArrayList<>();
         try {
+            List<Post> allPosts = new ArrayList<>(findAll());
             Firestore db = FirestoreClient.getFirestore();
-            Query query = db.collection(GUARDADO_COLLECTION).whereEqualTo("idUser", idUser);
-            return executeQuery(query);
-        } catch (Exception e) {
+            db.collection(GUARDADO_COLLECTION).whereEqualTo("idUser", idUser).get().get().getDocuments().forEach(document -> {
+                String idPost = document.getString("idPost");
+                allPosts.stream()
+                    .filter(p -> p.id().equals(idPost))
+                    .forEach(posts::add);
+            });
             return posts;
+        } catch (Exception e) {
+            System.out.println("Error al buscar posts guardados por usuario: " + e);
+            return posts;
+        }
+    }
+
+    public boolean isPostGuardado(GuardadoRequest request) {
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            DocumentSnapshot snapshot = db.collection(GUARDADO_COLLECTION).document(request.idPost() + request.idUser()).get().get();
+            return snapshot.exists();
+        } catch (Exception e) {
+            System.out.println("Error al comprobar si el post está guardado: " + e);
+            return false;
         }
     }
 

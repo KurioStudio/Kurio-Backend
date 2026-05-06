@@ -75,4 +75,8 @@ public class PostService {
     public List<Post> findGuardadosByUser(String idUser) {
         return repository.findGuardadosByUser(idUser);
     }
+
+    public boolean isPostGuardado(GuardadoRequest request) {
+        return repository.isPostGuardado(request);
+    }
 }
