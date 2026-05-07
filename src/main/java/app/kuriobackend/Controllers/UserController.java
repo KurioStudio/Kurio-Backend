@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8080"})
@@ -49,10 +50,10 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateUser(@RequestBody UserRequest request){
+    public ResponseEntity<String> updateUser(@RequestPart("request") UserRequest request, @RequestPart("file") MultipartFile file) {
         User user = User.fromRequest(request);
 
-        if(service.updateUser(user)){
+        if(service.updateUser(user, file)){
             return ResponseEntity.ok("0");
         } else {
             return ResponseEntity.badRequest().body("-1");

@@ -5,6 +5,7 @@ import app.kuriobackend.Entities.Model.User;
 import app.kuriobackend.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserService {
@@ -27,8 +28,8 @@ public class UserService {
         return repository.findFollowedCount(idFollower);
     }
 
-    public boolean updateUser(User user) {
-        return repository.updateUser(user);
+    public boolean updateUser(User user, MultipartFile file) {
+        return repository.updateUser(user, file);
     }
 
     public UserResponse findById(String id) {

@@ -3,12 +3,17 @@ package app.kuriobackend.Repositories;
 import app.kuriobackend.Entities.Model.User;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
+import com.google.cloud.storage.Storage;
+import com.google.firebase.cloud.StorageClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,13 +99,48 @@ public class UserRepository {
         }
     }
 
-    public boolean updateUser(User user) {
+    public boolean updateUser(User user, MultipartFile file) {
         try {
             Firestore db = FirestoreClient.getFirestore();
+            User firebaseUser = db.collection(COLLECTION).document(user.email()).get().get().toObject(User.class);
+
+            if(firebaseUser.avatarImg() != null && !firebaseUser.avatarImg().isEmpty()){
+                borrarArchivoAnterior(firebaseUser.avatarImg());
+            }
+            
+            Storage storage = StorageClient.getInstance().bucket().getStorage();
+            String bucket = "kurio-6ecc0.firebasestorage.app";
+
+            if (file != null && !file.isEmpty()) {
+                String fileName = "profile_pictures/" + user.email() + "_" + file.getOriginalFilename();
+                BlobId blobId = BlobId.of(bucket, fileName);
+                BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
+                storage.create(blobInfo, file.getBytes());
+                String imageUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket + "/o/" + fileName + "?alt=media";
+                user = new User(user.id(), user.username(), user.email(), imageUrl, user.createdAt());
+            } else {
+                user = new User(user.id(), user.username(), user.email(), firebaseUser != null ? firebaseUser.avatarImg() : "", user.createdAt());
+            }
+
             db.collection(COLLECTION).document(user.email()).set(user).get();
             return true;
         } catch (Exception e) {
+            System.out.println("Error al actualizar el usuario: " + e);
             return false;
+        }
+    }
+
+    private void borrarArchivoAnterior(String avatarImg) {
+        if (avatarImg != null && !avatarImg.isEmpty()) {
+            try {
+                String bucket = "kurio-6ecc0.firebasestorage.app";
+                String fileName = avatarImg.substring(avatarImg.indexOf("/o/") + 3, avatarImg.indexOf("?alt=media"));
+                Storage storage = StorageClient.getInstance().bucket().getStorage();
+                BlobId blobId = BlobId.of(bucket, fileName);
+                storage.delete(blobId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
