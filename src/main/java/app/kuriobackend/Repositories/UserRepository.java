@@ -111,15 +111,15 @@ public class UserRepository {
                 if(firebaseUser.avatarImg() != null && !firebaseUser.avatarImg().isEmpty()){
                     borrarArchivoAnterior(firebaseUser.avatarImg());
                 }
-                
+
                 String fileName = "profile_pictures/" + user.email() + "_" + file.getOriginalFilename();
                 BlobId blobId = BlobId.of(bucket, fileName);
                 BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
                 storage.create(blobInfo, file.getBytes());
                 String imageUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket + "/o/" + fileName + "?alt=media";
-                user = new User(user.id(), user.username(), user.email(), imageUrl, user.createdAt());
+                user = new User(user.id(), user.username().isEmpty() ? firebaseUser.username() : user.username(), user.email(), imageUrl, user.createdAt());
             } else {
-                user = new User(user.id(), user.username(), user.email(), firebaseUser != null ? firebaseUser.avatarImg() : "", user.createdAt());
+                user = new User(user.id(), user.username().isEmpty() ? firebaseUser.username() : user.username(), user.email(), firebaseUser != null ? firebaseUser.avatarImg() : "", user.createdAt());
             }
 
             db.collection(COLLECTION).document(user.email()).set(user).get();
