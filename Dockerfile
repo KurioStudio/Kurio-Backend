@@ -1,3 +1,12 @@
+FROM node:20 AS frontend-build
+WORKDIR /frontend
+
+COPY frontend/package*.json ./
+RUN npm install
+
+COPY frontend/ ./
+RUN npm run build
+
 FROM gradle:8.14-jdk21 AS build
 WORKDIR /app
 COPY . .
