@@ -104,14 +104,14 @@ public class UserRepository {
             Firestore db = FirestoreClient.getFirestore();
             User firebaseUser = db.collection(COLLECTION).document(user.email()).get().get().toObject(User.class);
 
-            if(firebaseUser.avatarImg() != null && !firebaseUser.avatarImg().isEmpty()){
-                borrarArchivoAnterior(firebaseUser.avatarImg());
-            }
-            
             Storage storage = StorageClient.getInstance().bucket().getStorage();
             String bucket = "kurio-6ecc0.firebasestorage.app";
 
             if (file != null && !file.isEmpty()) {
+                if(firebaseUser.avatarImg() != null && !firebaseUser.avatarImg().isEmpty()){
+                    borrarArchivoAnterior(firebaseUser.avatarImg());
+                }
+                
                 String fileName = "profile_pictures/" + user.email() + "_" + file.getOriginalFilename();
                 BlobId blobId = BlobId.of(bucket, fileName);
                 BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
