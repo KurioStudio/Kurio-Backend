@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.cloud.storage.Storage;
 import com.google.firebase.cloud.StorageClient;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -31,7 +32,7 @@ public class UserRepository {
             //Primero añadimos el usuario a Firebase Auth con sus datos
             FirebaseAuth auth = FirebaseAuth.getInstance();
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-                    .setEmail(user.email())
+                    .setEmail(user.email().toLowerCase())
                     .setPassword(password)
                     .setDisplayName(user.username());
 
@@ -112,14 +113,14 @@ public class UserRepository {
                     borrarArchivoAnterior(firebaseUser.avatarImg());
                 }
 
-                String fileName = "profile_pictures/" + user.email() + "_" + file.getOriginalFilename();
+                String fileName = "profile_pictures/" + firebaseUser.id() + ".jpg";
                 BlobId blobId = BlobId.of(bucket, fileName);
                 BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
                 storage.create(blobInfo, file.getBytes());
-                String imageUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket + "/o/" + fileName + "?alt=media";
-                user = new User(user.id(), user.username().isEmpty() ? firebaseUser.username() : user.username(), user.email(), imageUrl, user.createdAt());
+                String imageUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket + "/o/" + URLEncoder.encode(fileName, "UTF-8") + "?alt=media";
+                user = new User(firebaseUser.id(), user.username().isEmpty() ? firebaseUser.username() : user.username(), user.email(), imageUrl, user.createdAt());
             } else {
-                user = new User(user.id(), user.username().isEmpty() ? firebaseUser.username() : user.username(), user.email(), firebaseUser != null ? firebaseUser.avatarImg() : "", user.createdAt());
+                user = new User(firebaseUser.id(), user.username().isEmpty() ? firebaseUser.username() : user.username(), user.email(), firebaseUser != null ? firebaseUser.avatarImg() : "", user.createdAt());
             }
 
             db.collection(COLLECTION).document(user.email()).set(user).get();

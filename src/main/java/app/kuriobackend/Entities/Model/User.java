@@ -11,7 +11,7 @@ public record User(String id, String username, String email, String avatarImg, S
                 null,
                 userRequest.username(),
                 userRequest.email(),
-                null,
+                userRequest.avatarImg(),
                 LocalDate.now().toString()
         );
     }
