@@ -17,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,6 +32,7 @@ public class PostController {
 
     @Autowired
     private PostService service;
+    private static final Logger logger = LogManager.getLogger(PostController.class);
 
     @PostMapping
     public ResponseEntity<String> create(
@@ -37,24 +40,42 @@ public class PostController {
             @RequestPart("imagenes") List<MultipartFile> imagenes ,
             @RequestPart("file") MultipartFile file
     ) {
-        Post post = Post.fromRequest(request);
-        int resultado = service.guardarPost(post, imagenes, file);
+        logger.info("Se va a crear post con title='{}', userId='{}', imagenesCount={}, fileName={}",
+                request.titulo(), request.user().id(), imagenes != null ? imagenes.size() : 0,
+                file != null ? file.getOriginalFilename() : "null");
+        try {
+            Post post = Post.fromRequest(request);
+            int resultado = service.guardarPost(post, imagenes, file);
 
-        if(resultado == 0){
-            return ResponseEntity.status(HttpStatus.CREATED).body("0");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+            if(resultado == 0){
+                logger.info("Se ha creado el post correctamente para userId='{}', title='{}'", request.user().id(), request.titulo());
+                return ResponseEntity.status(HttpStatus.CREATED).body("0");
+            } else {
+                logger.error("Excepción en crearPost con los datos de la operación: resultado={}", resultado);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+            }
+        } catch (Exception e) {
+            logger.error("Excepción en crearPost con los datos de la excepción: {}", e.toString(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-1");
         }
     }
 
     @PutMapping
     public ResponseEntity<String> update(@RequestBody String id, @RequestBody PostRequest request) {
-        Post post = Post.fromRequest(request);
-        int resultado = service.actualizarPost(id, post);
-        if(resultado == 0){
-            return ResponseEntity.status(HttpStatus.OK).body("0");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+        logger.info("Se va a actualizar post id='{}' con datos del request", id);
+        try {
+            Post post = Post.fromRequest(request);
+            int resultado = service.actualizarPost(id, post);
+            if(resultado == 0){
+                logger.info("Se ha actualizado el post id='{}' correctamente", id);
+                return ResponseEntity.status(HttpStatus.OK).body("0");
+            } else {
+                logger.error("Excepción en actualizarPost con los datos de la operación: resultado={}", resultado);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+            }
+        } catch (Exception e) {
+            logger.error("Excepción en actualizarPost con los datos de la excepción: {}", e.toString(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-1");
         }
     }
 

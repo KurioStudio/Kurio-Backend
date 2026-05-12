@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +22,14 @@ public class ComentarioController {
 
     @Autowired
     private ComentarioService service;
+    private static final Logger logger = LogManager.getLogger(ComentarioController.class);
 
     @PostMapping("/post")
     public ResponseEntity<ArrayList<ComentarioResponse>> mostrarComentariosPost(@RequestBody Map<String, String> payload) {
         String idPost = payload.get("idPost");
         List<Comentario> comentarios = service.mostrarComentariosPost(idPost);
-        System.out.println("Comentarios: " + comentarios);
+        logger.info("Se van a obtener comentarios para idPost='{}'", idPost);
+        logger.debug("Comentarios: {}", comentarios);
 
         if(comentarios!=null && !comentarios.isEmpty()){
             ArrayList<ComentarioResponse> comentarioResponse = new ArrayList<>();
@@ -40,11 +44,19 @@ public class ComentarioController {
 
     @PostMapping
     public ResponseEntity<String> guardar(@RequestBody ComentarioRequest comentarioRequest) {
-        int res = service.guardar(Comentario.fromRequest(comentarioRequest));
-        if(res == 0) {
-            return ResponseEntity.ok("0");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+        logger.info("Se va a guardar comentario para postId='{}' by user='{}'", comentarioRequest.idPost(), comentarioRequest.idUser());
+        try {
+            int res = service.guardar(Comentario.fromRequest(comentarioRequest));
+            if(res == 0) {
+                logger.info("Comentario guardado correctamente para postId='{}'", comentarioRequest.idPost());
+                return ResponseEntity.ok("0");
+            } else {
+                logger.error("Excepción en guardarComentario resultado={}", res);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+            }
+        } catch (Exception e) {
+            logger.error("Excepción en guardarComentario con los datos de la excepción: {}", e.toString(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-1");
         }
     }
 
