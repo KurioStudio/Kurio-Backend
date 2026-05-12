@@ -3,7 +3,8 @@ package app.kuriobackend.Entities.Model;
 import app.kuriobackend.Entities.DTO.ComentarioRequest;
 import app.kuriobackend.Entities.DTO.ComentarioResponse;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public record Comentario(String id, String idPost, String idUser, String contenido, String createdAt) {
@@ -13,7 +14,7 @@ public record Comentario(String id, String idPost, String idUser, String conteni
                 cr.idPost(),
                 cr.idUser(),
                 cr.contenido(),
-                LocalDate.now().toString()
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
         );
     }
 
