@@ -19,6 +19,7 @@ public class ComentarioService {
     public int guardar(Comentario comentario) {
         logger.info("Se va a guardar comentario postId='{}' userId='{}'", comentario.idPost(), comentario.idUser());
         try {
+            logger.debug("Comentario a guardar {}", comentario);
             int res = repository.guardar(comentario);
             logger.info("Resultado guardarComentario: {}", res);
             return res;
