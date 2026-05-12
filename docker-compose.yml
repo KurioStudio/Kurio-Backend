@@ -5,8 +5,8 @@ services:
   backend:
     build: .
     container_name: kurio-backend
-    ports:
-      - "8080:8080"
+    #ports:
+    #  - "8080:8080"
     depends_on:
       - mongo
     environment:
@@ -15,8 +15,8 @@ services:
   mongo:
     image: mongo:8
     container_name: kurio-mongo
-    ports:
-      - "27017:27017"
+    #ports:
+    #  - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
