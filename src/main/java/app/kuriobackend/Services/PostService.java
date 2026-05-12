@@ -107,4 +107,6 @@ public class PostService {
     public boolean isPostGuardado(GuardadoRequest request) {
         return repository.isPostGuardado(request);
     }
+
+    public int eliminarPost(String idPost) { return repository.eliminarPost(idPost); }
 }
