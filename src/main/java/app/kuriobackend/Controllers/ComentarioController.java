@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8080", "http://localhost:80"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8080", "http://localhost:80", "http://kurio.duckdns.org"})
 @RequestMapping("/api/comentario")
 public class ComentarioController {
 
