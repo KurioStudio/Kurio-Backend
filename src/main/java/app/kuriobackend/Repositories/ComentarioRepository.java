@@ -1,7 +1,6 @@
 package app.kuriobackend.Repositories;
 
 import app.kuriobackend.Entities.Model.Comentario;
-import app.kuriobackend.Services.PostService;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
@@ -17,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 public class ComentarioRepository {
 
     private final String COLLECTION = "comentarios";
-    private static final Logger logger = LogManager.getLogger(PostService.class);
+    private static final Logger logger = LogManager.getLogger(ComentarioRepository.class);
 
     public int guardar(Comentario comentario) {
         int res = 0;
@@ -58,15 +57,29 @@ public class ComentarioRepository {
     }
 
     public int eliminarComentario(String idComentario) {
-        int res = 0;
-        try{
+        try {
             Firestore db = FirestoreClient.getFirestore();
-            db.collection(COLLECTION).document(idComentario).delete().get();
-            return res;
+            DocumentReference document = db.collection(COLLECTION).document(idComentario);
+            DocumentSnapshot snapshot = document.get().get();
+
+            if (snapshot.exists()) {
+                document.delete().get();
+                return 0;
+            }
+
+            Query query = db.collection(COLLECTION).whereEqualTo("id", idComentario).limit(1);
+            QuerySnapshot querySnapshot = query.get().get();
+
+            if (querySnapshot.isEmpty()) {
+                logger.warn("No se encontró comentario para eliminar con id='{}'", idComentario);
+                return -1;
+            }
+
+            querySnapshot.getDocuments().getFirst().getReference().delete().get();
+            return 0;
         } catch (Exception e) {
-            res = -1;
-            logger.error("Error al eliminar comentario: " + e.toString(), e);
-            return res;
+            logger.error("Error al eliminar comentario con id='{}': {}", idComentario, e.toString(), e);
+            return -1;
         }
     }
 }
