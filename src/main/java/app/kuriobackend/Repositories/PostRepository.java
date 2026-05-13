@@ -33,11 +33,12 @@ public class PostRepository {
     private final String FOLLOW_COLLECTION = "follows";
     private final String GUARDADO_COLLECTION = "guardados";
     private static final Logger logger = LogManager.getLogger(PostService.class);
-    private ComentarioRepository comentarioRepository;
+
 
     @Autowired
     private GridFsTemplate gridFsTemplate;
-
+    @Autowired
+    private ComentarioRepository comentarioRepository;
     @Autowired
     private UserRepository userRepository;
 
