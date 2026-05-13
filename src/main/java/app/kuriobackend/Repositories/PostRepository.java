@@ -1,6 +1,7 @@
 package app.kuriobackend.Repositories;
 
 import app.kuriobackend.Entities.DTO.GuardadoRequest;
+import app.kuriobackend.Entities.Model.Comentario;
 import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Entities.Model.User;
 import app.kuriobackend.Services.PostService;
@@ -32,6 +33,7 @@ public class PostRepository {
     private final String FOLLOW_COLLECTION = "follows";
     private final String GUARDADO_COLLECTION = "guardados";
     private static final Logger logger = LogManager.getLogger(PostService.class);
+    private ComentarioRepository comentarioRepository;
 
     @Autowired
     private GridFsTemplate gridFsTemplate;
@@ -364,6 +366,10 @@ public class PostRepository {
         try {
             Firestore db = FirestoreClient.getFirestore();
             db.collection(COLLECTION).document(idPost).delete().get();
+            List<Comentario> comentarios = comentarioRepository.mostrarComentariosPost(idPost);
+            for(Comentario comentario : comentarios){
+                comentarioRepository.eliminarComentario(comentario.id());
+            }
             return res;
         } catch (Exception e) {
             logger.error("Excepción en eliminarPost con los datos de la excepción: {}", e.toString(), e);
