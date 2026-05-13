@@ -39,4 +39,15 @@ public class ComentarioService {
         }
     }
 
+    public int eliminarComentario(String idComentario) {
+        logger.info("Se van a eliminar comentarios para postId='{}'", idComentario);
+        try {
+            int res = repository.eliminarComentario(idComentario);
+            logger.info("Resultado eliminarComentarios: {}", res);
+            return res;
+        } catch (Exception e) {
+            logger.error("Excepción en eliminarComentarios con los datos de la excepción: {}", e.toString(), e);
+            return -1;
+        }
+    }
 }
