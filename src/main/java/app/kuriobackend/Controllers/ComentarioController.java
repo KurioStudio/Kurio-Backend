@@ -60,4 +60,21 @@ public class ComentarioController {
         }
     }
 
+    @DeleteMapping("/{idComentario}")
+    public ResponseEntity<String> eliminarComentario(@PathVariable String idComentario) {
+        logger.info("Se va a eliminar comentario con id='{}'", idComentario);
+        try {
+            int res = service.eliminarComentario(idComentario);
+            if(res == 0) {
+                logger.info("Comentario eliminado correctamente con id='{}'", idComentario);
+                return ResponseEntity.ok("0");
+            } else {
+                logger.error("Excepción en eliminarComentario resultado={}", res);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+            }
+        } catch (Exception e) {
+            logger.error("Excepción en eliminarComentario con los datos de la excepción: {}", e.toString(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-1");
+        }
+    }
 }

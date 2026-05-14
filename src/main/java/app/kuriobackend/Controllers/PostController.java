@@ -249,4 +249,23 @@ public class PostController {
         boolean resultado = service.isPostGuardado(request);
         return ResponseEntity.ok(resultado);
     }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminarPost(@PathVariable String id) {
+        logger.info("Se va a eliminar el post id='{}'", id);
+        try{
+            int resultado = service.eliminarPost(id);
+            if(resultado == 0){
+                logger.info("Se ha eliminado el post id='{}' correctamente", id);
+                return ResponseEntity.status(HttpStatus.OK).body("0");
+            } else {
+                logger.error("Excepción en eliminarPost con los datos de la operación: resultado={}", resultado);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("-1");
+            }
+        }catch(Exception e){
+            logger.error("Error al eliminar el post id='{}'", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

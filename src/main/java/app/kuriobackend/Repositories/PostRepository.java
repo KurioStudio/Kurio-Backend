@@ -1,6 +1,8 @@
 package app.kuriobackend.Repositories;
 
+import app.kuriobackend.Controllers.FollowController;
 import app.kuriobackend.Entities.DTO.GuardadoRequest;
+import app.kuriobackend.Entities.Model.Comentario;
 import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Entities.Model.User;
 import com.google.api.core.ApiFuture;
@@ -10,6 +12,8 @@ import com.google.cloud.storage.Storage;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.cloud.StorageClient;
 import com.mongodb.client.gridfs.model.GridFSFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -28,10 +32,13 @@ public class PostRepository {
     private final String COLLECTION = "posts";
     private final String FOLLOW_COLLECTION = "follows";
     private final String GUARDADO_COLLECTION = "guardados";
+    private static final Logger logger = LogManager.getLogger(FollowController.class);
+
 
     @Autowired
     private GridFsTemplate gridFsTemplate;
-
+    @Autowired
+    private ComentarioRepository comentarioRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -353,5 +360,22 @@ public class PostRepository {
             posts.add(post);
         }
         return posts;
+    }
+
+    public int eliminarPost(String idPost){
+        int res = 0;
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            db.collection(COLLECTION).document(idPost).delete().get();
+            List<Comentario> comentarios = comentarioRepository.mostrarComentariosPost(idPost);
+            for(Comentario comentario : comentarios){
+                comentarioRepository.eliminarComentario(comentario.id());
+            }
+            return res;
+        } catch (Exception e) {
+            logger.error("Excepción en eliminarPost con los datos de la excepción: {}", e.toString(), e);
+            res = -1;
+        }
+        return res;
     }
 }
