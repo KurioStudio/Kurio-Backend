@@ -1,6 +1,9 @@
 # Backend de **Kurio**.
 
-Este repositorio contiene el servicio backend y su configuración para ejecutarlo localmente y desplegarlo con **Docker Compose**.
+Este repositorio contiene el servicio backend, su configuración para ejecutarlo y desplegarlo con **Docker Compose**.
+
+[!NOTE]
+Este repositorio contiene la build hecha en el repositorio del frontend. Sin embargo, no contiene el archivo para hacer la conexión al proyecto de Firebase.
 
 ## Tecnologías
 
@@ -22,17 +25,15 @@ cd Kurio-Backend #Nos posicionamos en la carpeta del proyecto
 docker-compose up --build #Creamos el contenedor y lo ejecutamos
 ```
 
-- Despues de ejecutar estos comandos, accede a esta ruta para entrar en la aplicación en local [http://localhost:8080](http://localhost:8080).
-
-## Despliegue
-Recomendado: ejecutar detrás de un reverse proxy (Nginx/Traefik) y configurar un gestor de procesos (systemd).
-
-### Opción 2: Docker (si existe `Dockerfile`)
-
+- Despues de ejecutar estos comandos, accede al frontend y executa estes comando:
 ```bash
-docker build -t kurio-backend .
-docker run -p 8080:8080 --env-file .env kurio-backend
+npm run dev
 ```
+
+Después entra en esta ruta para entrar en la aplicación en local [http://localhost:5173](http://localhost:5173).
+
+## Probar en producción
+- Para acceder a la aplicación en producción accede a traves de este enlace [https://kurio.duckdns.org/](https://kurio.duckdns.org/).
 
 ## Base de datos
 
@@ -49,7 +50,10 @@ El proyecto utiliza:
   ```
 - Ver logs:
   ```bash
-  docker compose logs -f
+  docker exec -it kurio-backend sh
+  cd logs
+  ls
+  cat LOG.log #Reemplaza LOG por el archivo mostrado en el ls
   ```
 - Parar:
   ```bash
