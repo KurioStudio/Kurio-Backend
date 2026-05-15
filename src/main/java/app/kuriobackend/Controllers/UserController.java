@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8080", "http://localhost:80", "http://kurio.duckdns.org"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8080", "http://localhost:80", "https://kurio.duckdns.org"})
 @RequestMapping("/api/users")
 public class UserController {
 

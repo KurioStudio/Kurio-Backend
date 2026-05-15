@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8080", "http://localhost:80", "http://kurio.duckdns.org"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8080", "http://localhost:80", "https://kurio.duckdns.org"})
 @RequestMapping("/api/follow")
 public class FollowController {
 
