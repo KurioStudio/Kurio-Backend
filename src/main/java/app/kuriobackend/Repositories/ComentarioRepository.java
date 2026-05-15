@@ -1,5 +1,6 @@
 package app.kuriobackend.Repositories;
 
+import app.kuriobackend.Controllers.FollowController;
 import app.kuriobackend.Entities.Model.Comentario;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
@@ -16,7 +17,8 @@ import java.util.concurrent.ExecutionException;
 public class ComentarioRepository {
 
     private final String COLLECTION = "comentarios";
-    private static final Logger logger = LogManager.getLogger(ComentarioRepository.class);
+    private static final Logger logger = LogManager.getLogger(FollowController.class);
+
 
     public int guardar(Comentario comentario) {
         int res = 0;
@@ -24,8 +26,7 @@ public class ComentarioRepository {
             Firestore db = FirestoreClient.getFirestore();
             db.collection(COLLECTION).add(comentario);
             return res;
-        } catch (Exception e) {
-            logger.error("Error al guardar comentario: {}", e.toString(), e);
+        } catch (RuntimeException e) {
             res = -1;
             return res;
         }
@@ -39,7 +40,7 @@ public class ComentarioRepository {
                     .orderBy("createdAt", Query.Direction.DESCENDING);
             return executeQuery(query);
         } catch (Exception e) {
-            logger.error("Error al mostrar comentarios para postId='{}': {}", idPost, e.toString(), e);
+            System.out.println("Error al mostrar comentarios post: "  + e);
             return new ArrayList<>();
         }
     }

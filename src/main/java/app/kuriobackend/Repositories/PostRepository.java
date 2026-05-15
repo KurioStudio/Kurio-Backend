@@ -1,10 +1,10 @@
 package app.kuriobackend.Repositories;
 
+import app.kuriobackend.Controllers.FollowController;
 import app.kuriobackend.Entities.DTO.GuardadoRequest;
 import app.kuriobackend.Entities.Model.Comentario;
 import app.kuriobackend.Entities.Model.Post;
 import app.kuriobackend.Entities.Model.User;
-import app.kuriobackend.Services.PostService;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.cloud.storage.BlobInfo;
@@ -32,7 +32,7 @@ public class PostRepository {
     private final String COLLECTION = "posts";
     private final String FOLLOW_COLLECTION = "follows";
     private final String GUARDADO_COLLECTION = "guardados";
-    private static final Logger logger = LogManager.getLogger(PostService.class);
+    private static final Logger logger = LogManager.getLogger(FollowController.class);
 
 
     @Autowired

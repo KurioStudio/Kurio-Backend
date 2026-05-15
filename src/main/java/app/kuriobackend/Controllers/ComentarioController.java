@@ -59,6 +59,7 @@ public class ComentarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-1");
         }
     }
+
     @DeleteMapping("/{idComentario}")
     public ResponseEntity<String> eliminarComentario(@PathVariable String idComentario) {
         logger.info("Se va a eliminar comentario con id='{}'", idComentario);

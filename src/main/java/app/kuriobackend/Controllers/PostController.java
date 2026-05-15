@@ -250,6 +250,7 @@ public class PostController {
         return ResponseEntity.ok(resultado);
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarPost(@PathVariable String id) {
         logger.info("Se va a eliminar el post id='{}'", id);
@@ -267,6 +268,4 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
-
 }
